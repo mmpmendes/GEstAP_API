@@ -195,8 +195,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Arvore.cs" />
     <Compile Include="Models\EntidadeBO.cs" />
+    <Compile Include="Models\EntidadeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -108,5 +108,8 @@ namespace GEstAP_API.Controllers
                 return toReturn;
             }
         }
+
+        //[HttpGet]
+        //public List
     }
 }
