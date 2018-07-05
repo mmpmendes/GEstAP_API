@@ -7,6 +7,7 @@ using System.Web;
 
 namespace GEstAP_API.Models
 {
+    [DataContract]
     public class EntidadeNode
     {
         [DataMember]

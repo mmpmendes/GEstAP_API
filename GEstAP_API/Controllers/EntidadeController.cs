@@ -79,7 +79,7 @@ namespace GEstAP_API.Controllers
 
         [HttpGet]
         // GET api/entidade/getdependentsbycodigo?codigo=AC1000200000010100
-        public List<EntidadeBO> GetDependentsByCodigo(string codigo)
+        public List<EntidadeBO> GetDependentsByCodigo(string codigo, string designacao)
         {
             using (EstruturaAPEntities entities = new EstruturaAPEntities())
             {
@@ -109,7 +109,58 @@ namespace GEstAP_API.Controllers
             }
         }
 
-        //[HttpGet]
-        //public List
+        [HttpGet]
+        public EntidadeNode getArvore(string codigo, string designacao)
+        {
+
+            EntidadeNode toReturn = null;
+
+            using (EstruturaAPEntities entities = new EstruturaAPEntities())
+            {
+                Estrutura root = null;
+                if (string.IsNullOrEmpty(codigo) && string.IsNullOrEmpty(designacao))
+                {
+                    root = entities.Estrutura.Where(est => est.Depende == null).FirstOrDefault();
+                }
+                else if (string.IsNullOrEmpty(codigo))
+                {
+                    root = entities.Estrutura.Where(est => est.Entidade.Designacao.Contains(designacao)).FirstOrDefault();
+                }
+                else
+                {
+                    root = entities.Estrutura.Where(est => est.CodEstrutura.Contains(codigo)).FirstOrDefault();
+                }
+
+                if (root != null)
+                {
+                    toReturn = new EntidadeNode()
+                    {
+                        CodEntidade = root.CodEntidade,
+                        CodEstrutura = root.CodEstrutura,
+                        CodEstruturaInterno = root.CodEstruturaInterno,
+                        Designacao = root.Entidade?.Designacao,
+                        Sigla = root.Entidade?.Sigla,
+                        Supervisor = root.Supervisor?.CodEstruturaInterno,
+                        children = null
+                    };
+
+                    if(root.Dependentes != null && root.Dependentes.Count()>0)
+                    {
+                        toReturn.children = new List<EntidadeNode>();
+                        foreach (Estrutura item in root.Dependentes)
+                        {
+                            toReturn.children.Add(getArvore(item.CodEstrutura, null));
+                        }
+                    }
+                    else
+                    {
+                        toReturn.children = null;
+                    }
+                    
+                }
+            }
+            return toReturn;
+        }
+
     }
 }
